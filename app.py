@@ -23,10 +23,21 @@ def index():
     #tells Python to use the "mars" collection in MongoDB
    return render_template("index.html", mars=mars)
 
+
+#The next lines allow us to access the database, scrape new data using our scraping.py
 @app.route("/scrape")
+
+# Define it with def scrape():
 def scrape():
+
+    #we assign a new variable that points to our Mongo database
    mars = mongo.db.mars
+
+   #created a new variable to hold the newly scraped data
    mars_data = scraping.scrape_all()
+   
+   # with the gathered new data, we need to update the database using .update()
+   #upsert=True. This indicates to Mongo to create a new document if one doesn't already exist, and new data will always be saved (even if we haven't already created a document for it).
    mars.update({}, mars_data, upsert=True)
    return redirect('/', code=302)
 
